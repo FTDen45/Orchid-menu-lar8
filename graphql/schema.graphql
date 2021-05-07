@@ -1,0 +1,67 @@
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type Query {
+    posts: [Post!]! @paginate(defaultCount: 10)
+    post(id: ID @eq): Post @find
+    users: [User!]! @paginate(defaultCount: 10)
+    user(id: ID @eq): User @find
+}
+
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    user_id: Int!
+    user: User!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    email_verified_at: String
+    password: String!
+    remember_token: String!
+    created_at: String!
+    updated_at: String!
+    posts: [Post!]!
+}
+
+input CreateUserInput {
+    name: String!
+    email: String!
+    email_verified_at: DateTime!
+    password: String!
+    remember_token: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+input CreatePostInput {
+    title: String!
+    content: String!
+    user_id: Int!
+    user: CreateUserBelongsTo
+}
+
+input CreateUserBelongsTo {
+    connect: ID
+    create: CreateUserInput
+}
+
+type Mutation {
+
+    createPost(input: CreatePostInput! @spread): Post
+
+    updatePost(id: ID!, title: String,content: String): Post
+    deletePost(id: ID!): DeleteResponse
+}
+
+type DeleteResponse {
+    status: String!
+    message: String!
+}
